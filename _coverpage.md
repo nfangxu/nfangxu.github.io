@@ -5,4 +5,4 @@ Power by [nfangxu](https://github.com/nfangxu), and thanks [docsify](https://doc
 
 [I Want You](mailto:nfangxu@gmail.com)
 
-![](images/bg.jpg)
+![](images/v1.jpeg)
