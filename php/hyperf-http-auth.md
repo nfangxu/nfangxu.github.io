@@ -44,7 +44,7 @@ class User extends Model implements Authenticatable
 
 ### 在 controller 中使用
 
-```
+```php
 <?php
 declare(strict_types=1);
 

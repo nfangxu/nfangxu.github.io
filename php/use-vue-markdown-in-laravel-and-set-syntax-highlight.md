@@ -27,7 +27,7 @@ yarn add highlight.js --save
 
 - 在 `resources/js/app.js`, 这行代码以下 `window.Vue = require('vue');` 添加
 
-```js
+```javascript
 // 引入 vue-markdown 组件
 Vue.component('vue-markdown', require('vue-markdown').default);
 
