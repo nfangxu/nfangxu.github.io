@@ -30,7 +30,11 @@ type ILocked interface {
 
 ### 使用
 
-```golang
+```bash
+go get -d github.com/nfangxu/ilocker
+```
+
+```go
 package main
 
 import (
