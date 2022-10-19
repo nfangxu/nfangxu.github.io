@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <title>V.3C4J.COM</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">V.3C4J.COM</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-dy">电影</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-dsj">电视剧</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-zy">综艺</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-dm">动漫</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-ss">赛事</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-qt">其他</a></li>
+            </ul>
+            <form name="search" class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" name="q"
+                       value="">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="py-4" style="margin-top: 70px">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header"></div>
+
+                    <div class="card-body">
+                        <div id="mse"></div>
+                    </div>
+                    <div id="urls" class="card-footer text-muted">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<template id="urlItem">
+    <a href="" class="btn btn-sm m-1" aria-current="page"></a>
+</template>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"
+        integrity="sha512-n7swEtVCvXpQ7KxgpPyp0+DQQEf5vPpmzCRl14x2sp2v5LpCYCjrAx03mkBAbWwGF9eUoIk8YVcDFuJRIeYttg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+<script src="//unpkg.byted-static.com/xgplayer/2.31.2/browser/index.js" charset="utf-8"></script>
+<script src="//unpkg.byted-static.com/xgplayer-hls/2.5.2/dist/index.min.js" charset="utf-8"></script>
+<script>
+    const createUrlItem = (id, vod_id, title, url, vod_name) => {
+        let q = new URLSearchParams(window.location.search)
+
+        let item = document.querySelector('#urlItem')
+        item.content.querySelector('a').href = '?id=' + vod_id + '&u=' + id
+        item.content.querySelector('a').textContent = title
+        if (q.has('u') && q.get('u') == id) {
+            item.content.querySelector('a').classList.remove('btn-outline-primary')
+            item.content.querySelector('a').classList.add('btn-primary')
+        } else {
+            item.content.querySelector('a').classList.remove('btn-primary')
+            item.content.querySelector('a').classList.add('btn-outline-primary')
+        }
+        let videos = document.querySelector("#urls")
+        let c = document.importNode(item.content, true);
+        videos.appendChild(c)
+    }
+
+    (() => {
+        let dy = document.querySelector('.link-dy')
+        dy.href = 'index.html?min=0&max=100'
+        let dsj = document.querySelector('.link-dsj')
+        dsj.href = 'index.html?min=100&max=200'
+        let zy = document.querySelector('.link-zy')
+        zy.href = 'index.html?min=200&max=300'
+        let dm = document.querySelector('.link-dm')
+        dm.href = 'index.html?min=300&max=400'
+        let ss = document.querySelector('.link-ss')
+        ss.href = 'index.html?min=400&max=500'
+        let qt = document.querySelector('.link-qt')
+        qt.href = 'index.html?min=500&max=600'
+    })()
+
+    initSqlJs({
+        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+    }).then((SQL) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'if101.db', true);
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onload = e => {
+            let q = new URLSearchParams(window.location.search)
+            const uInt8Array = new Uint8Array(xhr.response);
+            const db = new SQL.Database(uInt8Array);
+            let sql = 'SELECT id,vod_id,title,url,vod_name FROM video_urls where vod_id=' + q.get('id')
+            console.log(sql)
+            const contents = db.exec(sql);
+            let v1 = contents[0].values[0]
+
+            contents[0].values.forEach((v) => {
+                if (q.has('u') && q.get('u') == v[0]) {
+                    v1 = v
+                }
+                createUrlItem(...v)
+            })
+            console.log(v1)
+            document.querySelector('.card-header').textContent = v1[4]
+            let player = new HlsPlayer({
+                id: 'mse',
+                autoplay: false,
+                url: v1[3],
+                playsinline: true,
+                fitVideoSize: 'auto',
+                videoInit: true,
+                pip: true,
+                cssFullscreen: true,
+                fluid: true,
+            });
+        };
+        xhr.send();
+    });
+</script>
+</body>
+</html>

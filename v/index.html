@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <title>V.3C4J.COM</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">V.3C4J.COM</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-dy">电影</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-dsj">电视剧</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-zy">综艺</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-dm">动漫</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-ss">赛事</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 link-qt">其他</a></li>
+            </ul>
+            <form name="search" class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" name="q"
+                       value="">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="py-4" style="margin-top: 70px">
+    <section class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div id="videos" class="row">
+                    </div>
+                </div>
+
+                <div id="pagination" class="m-auto">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item"><a class="page-link" href="#">上一页</a></li>
+                            <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<template id="videoItem">
+    <div class="col-lg-2 col-md-4 col-sm-6" style="margin-bottom: 10px">
+        <div class="card">
+            <a href="#">
+                <img src="" class="card-img-top" alt="" style="height: 300px">
+            </a>
+            <div class="card-body">
+                <h6 class="card-title"></h6>
+                <span class="card-text"></span>
+            </div>
+            <div class="card-footer">
+                <a class="badge text-bg-dark" href="javascript:void(0)"></a>
+                <a class="badge text-bg-dark" href="javascript:void(0)"></a>
+            </div>
+        </div>
+    </div>
+</template>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"
+        integrity="sha512-n7swEtVCvXpQ7KxgpPyp0+DQQEf5vPpmzCRl14x2sp2v5LpCYCjrAx03mkBAbWwGF9eUoIk8YVcDFuJRIeYttg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+<script>
+    const createVideoItem = (id, vod_id, vod_name, type_id, type_name, vod_pic, vod_remarks, vod_year, vod_state) => {
+        let card = document.querySelector('#videoItem')
+        // 图片
+        let img = card.content.querySelector('.card a img')
+        img.src = vod_pic
+
+        // 图片链接
+        let imgA = card.content.querySelector('.card a')
+        imgA.href = 'player.html?id=' + vod_id
+
+        // 标题
+        let title = card.content.querySelector('.card .card-body .card-title')
+        title.textContent = vod_name
+        let titleText = card.content.querySelector('.card .card-body .card-text')
+        titleText.textContent = vod_state + ' / ' + vod_remarks
+        // Label
+        let label = card.content.querySelectorAll('.card .card-footer a')
+        label[0].textContent = vod_year
+        label[1].textContent = type_name
+
+        let videos = document.querySelector("#videos")
+        let c = document.importNode(card.content, true);
+        videos.appendChild(c)
+    }
+
+    const rebuildHref = () => {
+        let q = new URLSearchParams(window.location.search)
+        let sq = ''
+        if (q.has('q')) {
+            sq = '&q=' + q.get('q')
+        }
+        // 导航栏
+        let dy = document.querySelector('.link-dy')
+        dy.href = 'index.html?min=0&max=100' + sq
+        let dsj = document.querySelector('.link-dsj')
+        dsj.href = 'index.html?min=100&max=200' + sq
+        let zy = document.querySelector('.link-zy')
+        zy.href = 'index.html?min=200&max=300' + sq
+        let dm = document.querySelector('.link-dm')
+        dm.href = 'index.html?min=300&max=400' + sq
+        let ss = document.querySelector('.link-ss')
+        ss.href = 'index.html?min=400&max=500' + sq
+        let qt = document.querySelector('.link-qt')
+        qt.href = 'index.html?min=500&max=600' + sq
+
+        let lq = ''
+        if (q.has('min') && q.has('max')) {
+            lq = 'min=' + q.get('min') + '&max=' + q.get('max')
+            switch (true) {
+                case q.get('min') === '0':
+                    dy.classList.add('active')
+                    break
+                case q.get('min') === '100':
+                    dsj.classList.add('active')
+                    break
+                case q.get('min') === '200':
+                    zy.classList.add('active')
+                    break
+                case q.get('min') === '300':
+                    dm.classList.add('active')
+                    break
+                case q.get('min') === '400':
+                    ss.classList.add('active')
+                    break
+                case q.get('min') === '500':
+                    qt.classList.add('active')
+                    break
+            }
+        }
+
+        // 分页
+        let pg = document.querySelectorAll('#pagination .pagination .page-item')
+        let prevEnable = false
+        let prevPage = 1
+        let nextPage = 2
+        if (q.has('p') && q.get('p') > 1) {
+            prevEnable = true
+            nextPage = parseInt(q.get('p')) + 1
+            prevPage = parseInt(q.get('p')) > 1 ? parseInt(q.get('p')) - 1 : 1
+        }
+        if (!prevEnable) {
+            pg[0].classList.add('disabled')
+        }
+        pg[0].querySelector('a').href = 'index.html?' + lq + sq + '&p=' + prevPage
+        pg[1].querySelector('a').href = 'index.html?' + lq + sq + '&p=' + nextPage
+    }
+    rebuildHref()
+
+    initSqlJs({
+        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+    }).then((SQL) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'if101.db', true);
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onload = e => {
+            let q = new URLSearchParams(window.location.search)
+            const uInt8Array = new Uint8Array(xhr.response);
+            const db = new SQL.Database(uInt8Array);
+            let sql = 'SELECT id,vod_id,vod_name,type_id,type_name,vod_pic,vod_remarks,vod_year,vod_state FROM videos '
+            let where = 'where'
+            if (q.has('min') && q.has('max')) {
+                where += ' type_id > ' + q.get('min') + ' and type_id < ' + q.get('max')
+            }
+            if (q.has('q')) {
+                let prefix = ' '
+                if (where !== 'where') {
+                    prefix = ' and '
+                }
+                let k = '"%' + q.get('q') + '%"'
+                where += prefix + '(vod_name like ' + k + ' or vod_sub like ' + k + ' or vod_actor like ' + k + ' or vod_director like ' + k + ')'
+            }
+            if (where !== 'where') {
+                sql += where
+            }
+            sql += ' order by updated_at desc,vod_year desc '
+            if (q.has('p') && parseInt(q.get('p')) > 1) {
+                sql += 'limit ' + 60 * (parseInt(q.get('p')) - 1) + ',60'
+            } else {
+                sql += 'limit 60'
+            }
+            const contents = db.exec(sql);
+            contents[0].values.forEach((v) => {
+                createVideoItem(...v)
+            })
+        };
+        xhr.send();
+    });
+</script>
+</body>
+</html>
