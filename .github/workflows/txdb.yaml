@@ -1,0 +1,25 @@
+name: txdb
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  default:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Allow script to run
+        run: cd v && chmod +x ./txdb
+
+      - name: Run 69shu script with 36664
+        run: cd v && ./69shu
+
+      - name: Push
+        run: |
+          git config --global user.name 'nfangxu'
+          git config --global user.email 'nfangxu@gmail.com'
+          git add .
+          git commit -am "auto commit"
+          git pull && git push
