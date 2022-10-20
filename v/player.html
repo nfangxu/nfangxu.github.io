@@ -159,6 +159,14 @@
                 pip: true,
                 cssFullscreen: true,
                 fluid: true,
+                textTrack: [
+                    {
+                        src: "./text.vtt",
+                        kind: "captions",
+                        label: "声明",
+                        default: true
+                    }
+                ],
             });
         };
         xhr.send();
