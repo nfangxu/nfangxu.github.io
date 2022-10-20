@@ -129,7 +129,7 @@
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
     }).then((SQL) => {
         const xhr = new XMLHttpRequest();
-        let db = 'db/tx' + thisDB() + '.3c4j'
+        let db = 'db/tx' + thisDB() + '.' + Q.get('id') + '.3c4j'
         xhr.open('GET', db, true);
         xhr.responseType = 'arraybuffer';
         xhr.onprogress = e => {
@@ -146,7 +146,6 @@
             const uInt8Array = new Uint8Array(xhr.response);
             const db = new SQL.Database(uInt8Array);
             let sql = 'SELECT id,vod_id,title,url,vod_name FROM video_urls where vod_id=' + q.get('id')
-            console.log(sql)
             const contents = db.exec(sql);
             let v1 = contents[0].values[0]
 

@@ -8,7 +8,7 @@
     <title>V.3C4J.COM</title>
     <script>
         var _hmt = _hmt || [];
-        (function() {
+        (function () {
             var hm = document.createElement("script");
             hm.src = "https://hm.baidu.com/hm.js?aba94977ae358681c6b8f0352efe1699";
             var s = document.getElementsByTagName("script")[0];
@@ -215,6 +215,11 @@
     }).then((SQL) => {
         const xhr = new XMLHttpRequest();
         let db = 'db/tx' + thisDB() + '.3c4j'
+        if (search() === '') {
+            if (thisPage() === 1) {
+                db = 'db/p1.tx' + thisDB() + '.3c4j'
+            }
+        }
         xhr.open('GET', db, true);
         xhr.responseType = 'arraybuffer';
         xhr.onprogress = e => {
