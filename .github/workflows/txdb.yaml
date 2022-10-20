@@ -14,7 +14,7 @@ jobs:
         run: cd v && chmod +x ./txdb
 
       - name: Run 69shu script with 36664
-        run: cd v && ./69shu
+        run: cd v && ./txdb
 
       - name: Push
         run: |
