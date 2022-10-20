@@ -38,6 +38,11 @@
 
 <main class="py-4" style="margin-top: 70px">
     <div class="container">
+        <div id="loading" class="progress m-2">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                 aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100"
+            ></div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
@@ -117,7 +122,14 @@
         let db = 'db/tx' + thisDB() + '.3c4j'
         xhr.open('GET', db, true);
         xhr.responseType = 'arraybuffer';
-
+        xhr.onprogress = e => {
+            if (e.lengthComputable) {
+                let per = parseInt(e.loaded / e.total * 100);
+                let ld = document.querySelector('#loading')
+                ld.querySelector('.progress-bar').textContent = '加载中: ' + per + '%'
+                ld.querySelector('.progress-bar').style.width = per + '%'
+            }
+        }
         xhr.onload = e => {
             let q = new URLSearchParams(window.location.search)
             const uInt8Array = new Uint8Array(xhr.response);
