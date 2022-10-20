@@ -88,7 +88,7 @@
         let q = new URLSearchParams(window.location.search)
 
         let item = document.querySelector('#urlItem')
-        item.content.querySelector('a').href = '?id=' + vod_id + '&u=' + id
+        item.content.querySelector('a').href = '?db='+thisDB()+'&id=' + vod_id + '&u=' + id
         item.content.querySelector('a').textContent = title
         if (q.has('u') && q.get('u') == id) {
             item.content.querySelector('a').classList.remove('btn-outline-primary')
