@@ -29,6 +29,7 @@
             <form name="search" class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" name="q"
                        value="">
+                <input id="dbInput" type="hidden" name="db">
                 <button class="btn btn-outline-primary" type="submit">Search</button>
             </form>
         </div>
@@ -67,6 +68,7 @@
 <script src="//unpkg.byted-static.com/xgplayer/2.31.2/browser/index.js" charset="utf-8"></script>
 <script src="//unpkg.byted-static.com/xgplayer-hls/2.5.2/dist/index.min.js" charset="utf-8"></script>
 <script>
+    let Q = new URLSearchParams(window.location.search)
     const createUrlItem = (id, vod_id, title, url, vod_name) => {
         let q = new URLSearchParams(window.location.search)
 
@@ -84,27 +86,36 @@
         let c = document.importNode(item.content, true);
         videos.appendChild(c)
     }
-
+    const thisDB = () => {
+        if (Q.has('db')) {
+            return Q.get('db')
+        }
+        return '001'
+    }
     (() => {
+        // 导航栏
         let dy = document.querySelector('.link-dy')
-        dy.href = 'index.html?min=0&max=100'
+        dy.href = 'index.html?db=001'
         let dsj = document.querySelector('.link-dsj')
-        dsj.href = 'index.html?min=100&max=200'
+        dsj.href = 'index.html?db=002'
         let zy = document.querySelector('.link-zy')
-        zy.href = 'index.html?min=200&max=300'
+        zy.href = 'index.html?db=003'
         let dm = document.querySelector('.link-dm')
-        dm.href = 'index.html?min=300&max=400'
+        dm.href = 'index.html?db=004'
         let ss = document.querySelector('.link-ss')
-        ss.href = 'index.html?min=400&max=500'
+        ss.href = 'index.html?db=005'
         let qt = document.querySelector('.link-qt')
-        qt.href = 'index.html?min=500&max=600'
+        qt.href = 'index.html?db=006'
+
+        document.querySelector('#dbInput').value = thisDB()
     })()
 
     initSqlJs({
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
     }).then((SQL) => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'if101.db', true);
+        let db = 'db/tx' + thisDB() + '.3c4j'
+        xhr.open('GET', db, true);
         xhr.responseType = 'arraybuffer';
 
         xhr.onload = e => {

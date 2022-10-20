@@ -29,6 +29,7 @@
             <form name="search" class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" name="q"
                        value="">
+                <input id="dbInput" type="hidden" name="db">
                 <button class="btn btn-outline-primary" type="submit">Search</button>
             </form>
         </div>
@@ -83,6 +84,8 @@
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
 <script>
+    let Q = new URLSearchParams(window.location.search)
+
     const createVideoItem = (id, vod_id, vod_name, type_id, type_name, vod_pic, vod_remarks, vod_year, vod_state) => {
         let card = document.querySelector('#videoItem')
         // 图片
@@ -91,7 +94,7 @@
 
         // 图片链接
         let imgA = card.content.querySelector('.card a')
-        imgA.href = 'player.html?id=' + vod_id
+        imgA.href = 'player.html?db=' + thisDB() + '&id=' + vod_id
 
         // 标题
         let title = card.content.querySelector('.card .card-body .card-title')
@@ -108,60 +111,82 @@
         videos.appendChild(c)
     }
 
+    const thisDB = () => {
+        if (Q.has('db')) {
+            return Q.get('db')
+        }
+        return '001'
+    }
+
+    const thisPage = () => {
+        let p = Q.get('p')
+        if (p && parseInt(p) > 1) {
+            return parseInt(p)
+        }
+        return 1
+    }
+
+    const search = (toUrlQuery) => {
+        if (!Q.has('q')) {
+            return ''
+        }
+        if (toUrlQuery) {
+            return 'q=' + Q.get('q')
+        }
+        return Q.get('q')
+    }
+
     const rebuildHref = () => {
-        let q = new URLSearchParams(window.location.search)
         let sq = ''
-        if (q.has('q')) {
-            sq = '&q=' + q.get('q')
+        if (search()) {
+            sq = '&' + search(true)
         }
         // 导航栏
         let dy = document.querySelector('.link-dy')
-        dy.href = 'index.html?min=0&max=100' + sq
+        dy.href = 'index.html?db=001' + sq
         let dsj = document.querySelector('.link-dsj')
-        dsj.href = 'index.html?min=100&max=200' + sq
+        dsj.href = 'index.html?db=002' + sq
         let zy = document.querySelector('.link-zy')
-        zy.href = 'index.html?min=200&max=300' + sq
+        zy.href = 'index.html?db=003' + sq
         let dm = document.querySelector('.link-dm')
-        dm.href = 'index.html?min=300&max=400' + sq
+        dm.href = 'index.html?db=004' + sq
         let ss = document.querySelector('.link-ss')
-        ss.href = 'index.html?min=400&max=500' + sq
+        ss.href = 'index.html?db=005' + sq
         let qt = document.querySelector('.link-qt')
-        qt.href = 'index.html?min=500&max=600' + sq
+        qt.href = 'index.html?db=006' + sq
 
-        let lq = ''
-        if (q.has('min') && q.has('max')) {
-            lq = 'min=' + q.get('min') + '&max=' + q.get('max')
-            switch (true) {
-                case q.get('min') === '0':
-                    dy.classList.add('active')
-                    break
-                case q.get('min') === '100':
-                    dsj.classList.add('active')
-                    break
-                case q.get('min') === '200':
-                    zy.classList.add('active')
-                    break
-                case q.get('min') === '300':
-                    dm.classList.add('active')
-                    break
-                case q.get('min') === '400':
-                    ss.classList.add('active')
-                    break
-                case q.get('min') === '500':
-                    qt.classList.add('active')
-                    break
-            }
+        // DB
+        let lq = 'db='+thisDB()
+        switch (thisDB()) {
+            case '002':
+                dsj.classList.add('active')
+                break
+            case '003':
+                zy.classList.add('active')
+                break
+            case '004':
+                dm.classList.add('active')
+                break
+            case '005':
+                ss.classList.add('active')
+                break
+            case '006':
+                qt.classList.add('active')
+                break
+            default:
+                dy.classList.add('active')
         }
+        document.querySelector('#dbInput').value = thisDB()
 
         // 分页
         let pg = document.querySelectorAll('#pagination .pagination .page-item')
         let prevEnable = false
         let prevPage = 1
         let nextPage = 2
-        if (q.has('p') && q.get('p') > 1) {
+        if (thisPage() > 1) {
             prevEnable = true
-            nextPage = parseInt(q.get('p')) + 1
-            prevPage = parseInt(q.get('p')) > 1 ? parseInt(q.get('p')) - 1 : 1
+            nextPage = thisPage() + 1
+            prevPage = thisPage() > 1 ? thisPage() - 1 : 1
         }
         if (!prevEnable) {
             pg[0].classList.add('disabled')
@@ -175,7 +200,8 @@
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
     }).then((SQL) => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'if101.db', true);
+        let db = 'db/tx' + thisDB() + '.3c4j'
+        xhr.open('GET', db, true);
         xhr.responseType = 'arraybuffer';
 
         xhr.onload = e => {
@@ -184,23 +210,20 @@
             const db = new SQL.Database(uInt8Array);
             let sql = 'SELECT id,vod_id,vod_name,type_id,type_name,vod_pic,vod_remarks,vod_year,vod_state FROM videos '
             let where = 'where'
-            if (q.has('min') && q.has('max')) {
-                where += ' type_id > ' + q.get('min') + ' and type_id < ' + q.get('max')
-            }
-            if (q.has('q')) {
+            if (search()) {
                 let prefix = ' '
                 if (where !== 'where') {
                     prefix = ' and '
                 }
-                let k = '"%' + q.get('q') + '%"'
+                let k = '"%' + search() + '%"'
                 where += prefix + '(vod_name like ' + k + ' or vod_sub like ' + k + ' or vod_actor like ' + k + ' or vod_director like ' + k + ')'
             }
             if (where !== 'where') {
                 sql += where
             }
             sql += ' order by updated_at desc,vod_year desc '
-            if (q.has('p') && parseInt(q.get('p')) > 1) {
-                sql += 'limit ' + 60 * (parseInt(q.get('p')) - 1) + ',60'
+            if (thisPage() > 1) {
+                sql += 'limit ' + 60 * (thisPage() - 1) + ',60'
             } else {
                 sql += 'limit 60'
             }
