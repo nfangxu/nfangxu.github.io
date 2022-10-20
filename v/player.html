@@ -41,7 +41,8 @@
         <div id="loading" class="progress m-2">
             <div class="progress-bar progress-bar-striped progress-bar-animated"
                  aria-label="Animated striped example" aria-valuemin="0" aria-valuemax="100"
-            ></div>
+            >加载中: 0%
+            </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
@@ -131,6 +132,7 @@
             }
         }
         xhr.onload = e => {
+            document.querySelector('#loading').remove()
             let q = new URLSearchParams(window.location.search)
             const uInt8Array = new Uint8Array(xhr.response);
             const db = new SQL.Database(uInt8Array);
