@@ -6,14 +6,14 @@ on:
 
 jobs:
   default:
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
 
       - name: Allow script to run
         run: cd v && chmod +x ./txdb
 
-      - name: Run 69shu script with 36664
+      - name: Run script
         run: cd v && ./txdb
 
       - name: Push
